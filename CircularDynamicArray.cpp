@@ -34,6 +34,24 @@ class CircularDynamicArray
     };
 
     //Copy Assignment Operator
+    CircularDynamicArray& operator=(const CircularDynamicArray& other)
+    {
+        if (this != &other) {
+            T* newArray = new T[other.aCapacity];
+            for (int i = 0; i < other.aSize; i++)
+            {
+                newArray[i] = other.array[i];
+            }
+            delete[] array;
+            array = newArray;
+            aSize = other.aSize;
+            aCapacity = other.aCapacity;
+            isReversed = other.isReversed;
+            frontIndex = other.frontIndex;
+            endIndex = other.endIndex;
+        }
+        return *this;
+    }
 
 
     ~CircularDynamicArray()
@@ -194,24 +212,192 @@ class CircularDynamicArray
 
     };
 
-    T WCSelect(/*int k*/)
-    {
-
-    };
-
     void stableSort()
     {
+        T* tempArray = new T[aSize];
+        if(isReversed == false)
+        {
+            int startingIndex = actualPosition(frontIndex);
+            for(int i = 0; i < aSize; i++)
+            {
+                tempArray[i] = array[actualPosition(startingIndex)];
+                startingIndex++;
+            }
+        }else
+        if(isReversed == true)
+        {
+            int startingIndex = actualPosition(frontIndex);
+            for(int i = 0; i < aSize; i++)
+            {
+                tempArray[i] = array[actualPosition(startingIndex)];
+                startingIndex--;
+            }
+        }
+        int lowIndex = 0;
+        int highIndex = aSize - 1;
+        mergeSort(tempArray, lowIndex, highIndex);
 
+        for(int i = 0; i < aSize; i++)
+        {
+            array[actualPosition(i)] = tempArray[actualPosition(i)];
+        }
+        if(isReversed == false)
+        {
+            frontIndex = 0;
+            endIndex = actualPosition(aSize - 1);
+        }else
+        if(isReversed == true)
+        {
+            frontIndex = actualPosition(aSize - 1);
+            endIndex = 0;
+        }
+
+        delete[] tempArray;
     };
 
-    int linearSearch(/*T e*/)
+    void mergeBack(T tempArray[], int lowIndex, int middleIndex, int highIndex)
     {
+        int const leftSubArraySize = middleIndex - lowIndex + 1;
+        int const rightSubArraySize = highIndex - middleIndex;
 
+        T* leftSubArray = new T[leftSubArraySize];
+        T* rightSubArray = new T[rightSubArraySize];
+
+        for(int i = 0; i < leftSubArraySize; i++)
+        {
+            leftSubArray[i] = tempArray[lowIndex + i];
+        }
+        for(int i = 0; i < rightSubArraySize; i++)
+        {
+            rightSubArray[i] = tempArray[middleIndex + 1 + i];
+        }
+
+        int leftSubArrayStartingIndex = 0;
+        int rightSubArrayStartingIndex = 0;
+        int mergedArrayIndex = lowIndex;
+
+        while((leftSubArrayStartingIndex < leftSubArraySize) && (rightSubArrayStartingIndex < rightSubArraySize))
+        {
+            if(leftSubArray[leftSubArrayStartingIndex] <= rightSubArray[rightSubArrayStartingIndex])
+            {
+                tempArray[mergedArrayIndex] = leftSubArray[leftSubArrayStartingIndex];
+                leftSubArrayStartingIndex++;
+            }else
+            {
+                tempArray[mergedArrayIndex] = rightSubArray[rightSubArrayStartingIndex];
+                rightSubArrayStartingIndex++;
+            }
+            mergedArrayIndex++;
+        }
+
+        while(leftSubArrayStartingIndex < leftSubArraySize)
+        {
+            tempArray[mergedArrayIndex] = leftSubArray[leftSubArrayStartingIndex];
+            leftSubArrayStartingIndex++;
+            mergedArrayIndex++;
+        }
+
+        while(rightSubArrayStartingIndex < rightSubArraySize)
+        {
+            tempArray[mergedArrayIndex] = rightSubArray[rightSubArrayStartingIndex];
+            rightSubArrayStartingIndex++;
+            mergedArrayIndex++;
+        }
+
+        delete[] leftSubArray;
+        delete[] rightSubArray;
+    }
+
+    void mergeSort(T tempArray[], int const lowIndex, int const highIndex)
+    {
+        if(lowIndex >= highIndex)
+        {
+            return;
+        }
+
+        int middleIndex = lowIndex + (highIndex - lowIndex) / 2;
+        mergeSort(tempArray, lowIndex, middleIndex);
+        mergeSort(tempArray, middleIndex + 1, highIndex);
+        mergeBack(tempArray, lowIndex, middleIndex, highIndex);
+    }
+
+    int linearSearch(T e)
+    {
+        bool found = false;
+        for(int i = 0; i < aSize; i++)
+        {
+            if(array[actualPosition(i) == e])
+            {
+                found = true;
+                return actualPosition(i);
+            }
+        }
+        if(found == false)
+        {
+            return -1;
+        }
     };
 
-    int binSearch(/*T e*/)
+    int binSearch(T e)
     {
+        T* tempArray = new T[aSize];
+        if(isReversed == false)
+        {
+            int startingIndex = actualPosition(frontIndex);
+            for(int i = 0; i < aSize; i++)
+            {
+                tempArray[i] = array[actualPosition(startingIndex)];
+                startingIndex++;
+            }
+        }else
+        if(isReversed == true)
+        {
+            int startingIndex = actualPosition(frontIndex);
+            for(int i = 0; i < aSize; i++)
+            {
+                tempArray[i] = array[actualPosition(startingIndex)];
+                startingIndex--;
+            }
+        }
+        int lowIndex = 0;
+        int highIndex = aSize - 1;
+        int binSearchIndex = splitSearch(e, tempArray, lowIndex, highIndex);
+        delete[] tempArray;
+        if(binSearchIndex == -1)
+        {
+            return -1;
+        }else
+        {
+            if(isReversed == false)
+            {
+                return actualPosition(frontIndex + binSearchIndex);
+            }else
+            if(isReversed == true)
+            {
+                return actualPosition(endIndex + binSearchIndex);
+            }
+        }
+        return binSearchIndex;
+    };
 
+    int splitSearch(T e, T tempArray[], int lowIndex, int highIndex)
+    {
+        while(lowIndex <= highIndex)
+        {
+            int middleIndex = (lowIndex + highIndex) / 2;
+            if(tempArray[middleIndex] == e)
+            {
+                return middleIndex;
+            }else
+            if(e > tempArray[middleIndex])
+            {
+                lowIndex = middleIndex + 1;
+            }else
+            {
+                highIndex = middleIndex - 1;
+            }
+        }
+        return -1;
     };
 
     void reverse()
@@ -235,7 +421,7 @@ class CircularDynamicArray
     T at(int i)
     {
         return array[actualPosition(i)];
-    }
+    };
     
     void print()
     {
@@ -257,7 +443,7 @@ class CircularDynamicArray
                 currentIndex--;
             }
         }
-    }
+    };
     
     int fIndex()
     {
@@ -267,7 +453,7 @@ class CircularDynamicArray
     int eIndex()
     {
         return endIndex;
-    }
+    };
 
 
 
@@ -368,48 +554,85 @@ class CircularDynamicArray
 
 int main()
 {
+//     CircularDynamicArray<int> myArray;
+//     cout<<"Size: "<<myArray.length()<<endl;
+//     cout<<"Capacity: "<<myArray.capacity()<<endl;
+//     //cout<<" "<<myArray.frontIndex<<" ";
+//     //cout<<" "<<myArray.endIndex<<" ";
+//     //myArray.reverse();
+//     myArray.addEnd(1);
+//     myArray.addEnd(2);
+//     myArray.addEnd(3);
+//     //myArray.delEnd();
+//     //myArray.reverse();
+//     myArray.addFront(0);
+//     myArray.addFront(-1);
+//     //myArray.reverse();
+//     //myArray.addFront(-2);
+//     myArray.reverse();
+//     myArray.addEnd(7);
+//     myArray.addEnd(8);
+//     myArray.delEnd();
+// //    myArray.addEnd(9);
+// //    myArray.addEnd(10);
+// //    myArray.addEnd(11);
+// //    myArray.addEnd(12);
+//     cout<<"Size2: "<<myArray.length()<<endl;
+//     cout<<"Capacity2: "<<myArray.capacity()<<endl;
+//     //myArray.reverse();
+//     cout<<"F: "<<myArray.fIndex()<<" ";
+//     cout<<"E: "<<myArray.eIndex()<<" ";
+//     //myArray.reverse();
+//     cout<<endl<<endl;
+//     for(int i = 0; i < 8; i++)
+//     {
+//         cout<<i<<": "<<myArray.at(i)<<endl;
+//     }
+//     cout<<endl<<endl;
+//     cout<<"Like the user sees it: "<<endl;
+//     myArray.print();
+// //    int currentIndex = myArray.frontIndex;
+// //    for(int i = 0; i < myArray.aSize; i++)
+// //    {
+// //        cout<<myArray.at(currentIndex)<<endl;
+// //        currentIndex++;
+// //    }
+//     return 0;
+
+
+
+
+
+
+
     CircularDynamicArray<int> myArray;
-    cout<<"Size: "<<myArray.length()<<endl;
-    cout<<"Capacity: "<<myArray.capacity()<<endl;
-    //cout<<" "<<myArray.frontIndex<<" ";
-    //cout<<" "<<myArray.endIndex<<" ";
-    //myArray.reverse();
-    myArray.addEnd(1);
-    myArray.addEnd(2);
     myArray.addEnd(3);
-    //myArray.delEnd();
-    //myArray.reverse();
-    myArray.addFront(0);
-    myArray.addFront(-1);
-    //myArray.reverse();
-    //myArray.addFront(-2);
-    myArray.reverse();
+    myArray.addEnd(-1);
     myArray.addEnd(7);
-    myArray.addEnd(8);
-    myArray.delEnd();
-//    myArray.addEnd(9);
-//    myArray.addEnd(10);
-//    myArray.addEnd(11);
-//    myArray.addEnd(12);
-    cout<<"Size2: "<<myArray.length()<<endl;
-    cout<<"Capacity2: "<<myArray.capacity()<<endl;
-    //myArray.reverse();
+    myArray.addEnd(5);
+    myArray.addEnd(23);
+    myArray.addEnd(46);
+    //myArray.addFront(0);
+    //myArray.addFront(-13);
+    myArray.reverse();
+    myArray.stableSort();
+    //cout<<"POSITION::: "<<myArray.binSearch(46)<<endl;
+
     cout<<"F: "<<myArray.fIndex()<<" ";
     cout<<"E: "<<myArray.eIndex()<<" ";
-    //myArray.reverse();
+
     cout<<endl<<endl;
     for(int i = 0; i < 8; i++)
     {
         cout<<i<<": "<<myArray.at(i)<<endl;
     }
-    cout<<endl<<endl;
-    cout<<"Like the user sees it: "<<endl;
+
+    cout<<endl<<"Like the user sees it: "<<endl;
     myArray.print();
-//    int currentIndex = myArray.frontIndex;
-//    for(int i = 0; i < myArray.aSize; i++)
-//    {
-//        cout<<myArray.at(currentIndex)<<endl;
-//        currentIndex++;
-//    }
     return 0;
 }
+
+
+
+
+
