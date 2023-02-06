@@ -19,18 +19,26 @@ class CircularDynamicArray
     CircularDynamicArray(int s) //DONE
     {
         array = new T[s];
-        aSize = 0;
+        aSize = s;
         aCapacity = s;
         isReversed = false;
         frontIndex = 0;
-        endIndex = 0;
+        endIndex = s - 1;
     };
 
     //Copy Constructor
     CircularDynamicArray(const CircularDynamicArray& other)
-        :aSize(other.aSize), aCapacity(other.aCapacity) //This makes a shallow copy of the size and capacity.
     {
-        
+        array = new T[other.aCapacity];
+        for(int i = 0; i < other.aCapacity; i++)
+        {
+            array[i] = other.array[i];
+        }
+        aSize = other.aSize;
+        aCapacity = other.aCapacity;
+        isReversed = other.isReversed;
+        frontIndex = other.frontIndex;
+        endIndex = other.endIndex;
     };
 
     //Copy Assignment Operator
@@ -60,15 +68,20 @@ class CircularDynamicArray
 
     T& operator[](int i)
     {
-        if((i < 0) || (i >= frontIndex + aSize))
+        if((i < 0) || (i > aSize - 1))
         {
-            cout<<"ERROR: ["<<i<<"] is out of bounds for this array. Enter a value between 0 and "<<i+frontIndex<<".\n";
+            cout<<"ERROR: ["<<i<<"] is out of bounds for this array. Enter a value between 0 and "<<aSize - 1<<".\n";
             return returnReferenceValue;
         }
         else
         {
-            //return the value at that position in the array.
-            return array[frontIndex + i];
+            if(isReversed == false)
+            {
+                return array[actualPosition(frontIndex + i)];
+            }else
+            {
+                return array[actualPosition(frontIndex - i)];
+            }
         };
     };
 
@@ -268,30 +281,30 @@ class CircularDynamicArray
                 Gindex++;
                 Gsize++;
             }
+        }
 
-            T recursiveResult;
-            if(k <= Lsize)
-            {
-                recursiveResult = select(L, Lsize, k);
-                delete[] L;
-                delete[] E;
-                delete[] G;
-                return recursiveResult;
-            }else
-            if(k <= Lsize + Esize)
-            {
-                delete[] L;
-                delete[] E;
-                delete[] G;
-                return pivot;
-            }else
-            {
-                recursiveResult = select(G, Gsize, k - Lsize - Esize);
-                delete[] L;
-                delete[] E;
-                delete[] G;
-                return recursiveResult;
-            }
+        T recursiveResult;
+        if(k <= Lsize)
+        {
+            recursiveResult = select(L, Lsize, k);
+            delete[] L;
+            delete[] E;
+            delete[] G;
+            return recursiveResult;
+        }else
+        if(k <= Lsize + Esize)
+        {
+            delete[] L;
+            delete[] E;
+            delete[] G;
+            return pivot;
+        }else
+        {
+            recursiveResult = select(G, Gsize, k - Lsize - Esize);
+            delete[] L;
+            delete[] E;
+            delete[] G;
+            return recursiveResult;
         }
     };
 
@@ -407,19 +420,14 @@ class CircularDynamicArray
 
     int linearSearch(T e)
     {
-        bool found = false;
         for(int i = 0; i < aSize; i++)
         {
             if(array[actualPosition(i)] == e)
             {
-                found = true;
                 return actualPosition(i);
             }
         }
-        if(found == false)
-        {
-            return -1;
-        }
+        return -1;
     };
 
     int binSearch(T e)
@@ -550,7 +558,7 @@ class CircularDynamicArray
     bool isReversed;
     int frontIndex;
     int endIndex;
-    T* returnReferenceValue;
+    T returnReferenceValue;
 
     void reallocate(int capacityNeeded) //Takes a parameter of the new capacity needed (provided by the caller). It then allocates a new array of that size, copies all elements over to it, and deletes the old array. DONE
     {
@@ -636,52 +644,88 @@ class CircularDynamicArray
 
 
 
-int main()
-{
+// int main()
+// {
+// //     CircularDynamicArray<int> myArray;
+// //     cout<<"Size: "<<myArray.length()<<endl;
+// //     cout<<"Capacity: "<<myArray.capacity()<<endl;
+// //     //cout<<" "<<myArray.frontIndex<<" ";
+// //     //cout<<" "<<myArray.endIndex<<" ";
+// //     //myArray.reverse();
+// //     myArray.addEnd(1);
+// //     myArray.addEnd(2);
+// //     myArray.addEnd(3);
+// //     //myArray.delEnd();
+// //     //myArray.reverse();
+// //     myArray.addFront(0);
+// //     myArray.addFront(-1);
+// //     //myArray.reverse();
+// //     //myArray.addFront(-2);
+// //     myArray.reverse();
+// //     myArray.addEnd(7);
+// //     myArray.addEnd(8);
+// //     myArray.delEnd();
+// // //    myArray.addEnd(9);
+// // //    myArray.addEnd(10);
+// // //    myArray.addEnd(11);
+// // //    myArray.addEnd(12);
+// //     cout<<"Size2: "<<myArray.length()<<endl;
+// //     cout<<"Capacity2: "<<myArray.capacity()<<endl;
+// //     //myArray.reverse();
+// //     cout<<"F: "<<myArray.fIndex()<<" ";
+// //     cout<<"E: "<<myArray.eIndex()<<" ";
+// //     //myArray.reverse();
+// //     cout<<endl<<endl;
+// //     for(int i = 0; i < 8; i++)
+// //     {
+// //         cout<<i<<": "<<myArray.at(i)<<endl;
+// //     }
+// //     cout<<endl<<endl;
+// //     cout<<"Like the user sees it: "<<endl;
+// //     myArray.print();
+// // //    int currentIndex = myArray.frontIndex;
+// // //    for(int i = 0; i < myArray.aSize; i++)
+// // //    {
+// // //        cout<<myArray.at(currentIndex)<<endl;
+// // //        currentIndex++;
+// // //    }
+// //     return 0;
+
+
+
+
+
+
+
 //     CircularDynamicArray<int> myArray;
-//     cout<<"Size: "<<myArray.length()<<endl;
-//     cout<<"Capacity: "<<myArray.capacity()<<endl;
-//     //cout<<" "<<myArray.frontIndex<<" ";
-//     //cout<<" "<<myArray.endIndex<<" ";
-//     //myArray.reverse();
-//     myArray.addEnd(1);
-//     myArray.addEnd(2);
 //     myArray.addEnd(3);
-//     //myArray.delEnd();
-//     //myArray.reverse();
-//     myArray.addFront(0);
-//     myArray.addFront(-1);
-//     //myArray.reverse();
-//     //myArray.addFront(-2);
-//     myArray.reverse();
+//     myArray.addEnd(-1);
 //     myArray.addEnd(7);
-//     myArray.addEnd(8);
-//     myArray.delEnd();
-// //    myArray.addEnd(9);
-// //    myArray.addEnd(10);
-// //    myArray.addEnd(11);
-// //    myArray.addEnd(12);
-//     cout<<"Size2: "<<myArray.length()<<endl;
-//     cout<<"Capacity2: "<<myArray.capacity()<<endl;
+//     myArray.addEnd(5);
+//     myArray.addEnd(23);
+//     myArray.addEnd(46);
+//     myArray.addFront(444);
+//     //myArray.addFront(0);
+//     //myArray.addFront(-13);
 //     //myArray.reverse();
+//     myArray.stableSort();
+//     cout<<"FOUND"<<myArray.binSearch(5)<<endl;
+//     cout<<"LinearSearchFound: "<<myArray.linearSearch(23)<<endl;
+//     //cout<<"POSITION::: "<<myArray.binSearch(46)<<endl;
+
 //     cout<<"F: "<<myArray.fIndex()<<" ";
 //     cout<<"E: "<<myArray.eIndex()<<" ";
-//     //myArray.reverse();
+
 //     cout<<endl<<endl;
 //     for(int i = 0; i < 8; i++)
 //     {
 //         cout<<i<<": "<<myArray.at(i)<<endl;
 //     }
-//     cout<<endl<<endl;
-//     cout<<"Like the user sees it: "<<endl;
+
+//     cout<<endl<<"Like the user sees it: "<<endl;
 //     myArray.print();
-// //    int currentIndex = myArray.frontIndex;
-// //    for(int i = 0; i < myArray.aSize; i++)
-// //    {
-// //        cout<<myArray.at(currentIndex)<<endl;
-// //        currentIndex++;
-// //    }
 //     return 0;
+// }
 
 
 
@@ -689,37 +733,132 @@ int main()
 
 
 
-    CircularDynamicArray<int> myArray;
-    myArray.addEnd(3);
-    myArray.addEnd(-1);
-    myArray.addEnd(7);
-    myArray.addEnd(5);
-    myArray.addEnd(23);
-    myArray.addEnd(46);
-    myArray.addFront(444);
-    //myArray.addFront(0);
-    //myArray.addFront(-13);
-    //myArray.reverse();
-    myArray.stableSort();
-    cout<<"FOUND"<<myArray.binSearch(5)<<endl;
-    cout<<"LinearSearchFound: "<<myArray.linearSearch(23)<<endl;
-    //cout<<"POSITION::: "<<myArray.binSearch(46)<<endl;
 
-    cout<<"F: "<<myArray.fIndex()<<" ";
-    cout<<"E: "<<myArray.eIndex()<<" ";
 
-    cout<<endl<<endl;
-    for(int i = 0; i < 8; i++)
-    {
-        cout<<i<<": "<<myArray.at(i)<<endl;
-    }
 
-    cout<<endl<<"Like the user sees it: "<<endl;
-    myArray.print();
-    return 0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void foo(CircularDynamicArray<int> x) {
+	for (int i=0; i<x.length()/2; i++)
+		x[i] = x[x.length()/2+i];
+	// X => "6 7 8 9 10 15 19 6 7 8 9 10 15 19 11"
+	for (int i=0; i< x.length();i++) cout << x[i] << " ";  cout << endl;
 }
 
+int main(){
+	CircularDynamicArray<float> C(10);
+    //cout<<"Length(size): "<<C.length()<<endl;
+    //cout<<"Capacity: "<<C.capacity()<<endl;
+	for (int i=0; i< C.length();i++) C[i] = i;
+	for (int i=0; i< C.length();i++) cout << C[i] << " ";  cout << endl;
+	// // C => "0 1 2 3 4 5 6 7 8 9"
+	C.delFront();
+	for (int i=0; i< C.length();i++) cout << C[i] << " ";  cout << endl;
+	// // C => "1 2 3 4 5 6 7 8 9"
+	C.delEnd();
+	for (int i=0; i< C.length();i++) cout << C[i] << " ";  cout << endl;
+	// // C => "1 2 3 4 5 6 7 8"
+	C.addEnd(100.0);
+	for (int i=0; i< C.length();i++) cout << C[i] << " ";  cout << endl;
+    //cout<<"FRONTindex: "<<C.fIndex()<<endl;
+    //cout<<"ENDindex: "<<C.eIndex()<<endl;
+	// // C => "1 2 3 4 5 6 7 8 100"
+	C.delFront();
+	C.addEnd(200.0);
+    for (int i=0; i< C.length();i++) cout << C[i] << " ";  cout << endl;
+	// // C => "2 3 4 5 6 7 8 100 200"	
 
+	C.addEnd(300.0);
+	C.addEnd(400.0);
+    for (int i=0; i< C.length();i++) cout << C[i] << " ";  cout << endl;
+	// // C => "2 3 4 5 6 7 8 100 200 300 400"	
+	
+	C.reverse();
+	for (int i=0; i< C.length();i++) cout << C[i] << " ";  cout << endl;
+	// // C => "400 300 200 100 8 7 6 5 4 3 2"	
+	
+	C.delFront(); C.delFront();C.delEnd();
+	for (int i=0; i< C.length();i++) cout << C[i] << " ";  cout << endl;
+	// // C => "200 100 8 7 6 5 4 3"	
 
+	C.reverse();
+	for (int i=0; i< C.length();i++) cout << C[i] << " ";  cout << endl;
+	// // C => "3 4 5 6 7 8 100 200"		
 
+	// CircularDynamicArray<int> A,B;
+	// for(int i=0; i<10;i++) A.addEnd(i);
+	// B = A;
+	// A.addEnd(15); A.addEnd(19);
+	// // A => "0 1 2 3 4 5 6 7 8 9 15 19" 
+	// cout << "Select is " << A.linearSearch(5) << endl;
+	// // A => "0 1 2 3 4 5 6 7 8 9 15 19" Search => 5
+	// cout << "Select is " << A.binSearch(12) << endl;
+	// // A => "0 1 2 3 4 5 6 7 8 9 15 19" Search => -1
+	// cout << "Select is " << A.binSearch(15) << endl;
+	// // A => "0 1 2 3 4 5 6 7 8 9 15 19" Search => 10	
+	// A.addFront(10); 
+	// // A => "10 0 1 2 3 4 5 6 7 8 9 15 19"
+	// cout << "Select is " << A.linearSearch(5) << endl;
+	// // A => "10 0 1 2 3 4 5 6 7 8 9 15 19" Search => 6
+	// cout << "Select is " << A.QuickSelect(3) << endl;
+    // // Select => 2	
+	// //	cout << "Select is " << A.WCSelect(12) << endl;
+	// // Select => 15
+	// A.stableSort();
+	// // A => "0 1 2 3 4 5 6 7 8 9 10 15 19"
+	// A.addEnd(11); A.addFront(1); A.addFront(2); A.addFront(3);
+	// cout << "capacity is " << A.capacity() << endl;
+	// // A => "3 2 1 0 1 2 3 4 5 6 7 8 9 10 15 19 11"	  capacity => 32
+	// A.delFront(); A.delFront();
+	// // A => "1 0 1 2 3 4 5 6 7 8 9 10 15 19 11"	  capacity => 32
 
+	// foo(A);
+	// for (int i=0; i< A.length();i++) cout << A[i] << " ";  cout << endl;
+	// // A => "1 0 1 2 3 4 5 6 7 8 9 10 15 19 11"
+	// for (int i=0; i< B.length();i++) cout << B[i] << " ";  cout << endl;
+	// // B => "0 1 2 3 4 5 6 7 8 9"
+
+    return 0;
+}
