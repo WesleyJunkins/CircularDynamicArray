@@ -420,11 +420,28 @@ class CircularDynamicArray
 
     int linearSearch(T e)
     {
-        for(int i = 0; i < aSize; i++)
+        if(isReversed == false)
         {
-            if(array[actualPosition(i)] == e)
+            int startingIndex = frontIndex;
+            for(int i = 0; i < aSize; i++)
             {
-                return actualPosition(i);
+                if(array[actualPosition(startingIndex)] == e)
+                {
+                    return i; //We return i because this is the USER's view. We would return actualPosition(startingIndex) if we were in the PROGRAMMER's view.
+                }
+                startingIndex++;
+            }
+        }else
+        if(isReversed == true)
+        {
+            int startingIndex = endIndex;
+            for(int i = 0; i < aSize; i++)
+            {
+                if(array[actualPosition(startingIndex)] == e)
+                {
+                    return i;
+                }
+                startingIndex++;
             }
         }
         return -1;
@@ -827,26 +844,43 @@ int main(){
 	for (int i=0; i< C.length();i++) cout << C[i] << " ";  cout << endl;
 	// // C => "3 4 5 6 7 8 100 200"		
 
-	// CircularDynamicArray<int> A,B;
-	// for(int i=0; i<10;i++) A.addEnd(i);
-	// B = A;
-	// A.addEnd(15); A.addEnd(19);
+	CircularDynamicArray<int> A,B;
+	for(int i=0; i<10;i++) A.addEnd(i);
+	B = A;
+    // cout<<"FRONT: "<<A.fIndex()<<endl;
+    // cout<<"END: "<<A.eIndex()<<endl;
+	A.addEnd(15); A.addEnd(19);
+    // cout<<"FRONT: "<<A.fIndex()<<endl;
+    // cout<<"END: "<<A.eIndex()<<endl;
+    for (int i=0; i< A.length();i++) cout << A[i] << " ";  cout << endl;
+    // cout<<"FRONT: "<<A.fIndex()<<endl;
+    // cout<<"END: "<<A.eIndex()<<endl;
 	// // A => "0 1 2 3 4 5 6 7 8 9 15 19" 
-	// cout << "Select is " << A.linearSearch(5) << endl;
+	cout << "Select is " << A.linearSearch(5) << endl;
+    // cout<<"FRONT: "<<A.fIndex()<<endl;
+    // cout<<"END: "<<A.eIndex()<<endl;
 	// // A => "0 1 2 3 4 5 6 7 8 9 15 19" Search => 5
-	// cout << "Select is " << A.binSearch(12) << endl;
+	cout << "Select is " << A.binSearch(12) << endl;
+    // cout<<"FRONT: "<<A.fIndex()<<endl;
+    // cout<<"END: "<<A.eIndex()<<endl;
 	// // A => "0 1 2 3 4 5 6 7 8 9 15 19" Search => -1
-	// cout << "Select is " << A.binSearch(15) << endl;
+	cout << "Select is " << A.binSearch(15) << endl;
+    // cout<<"FRONT: "<<A.fIndex()<<endl;
+    // cout<<"END: "<<A.eIndex()<<endl;
 	// // A => "0 1 2 3 4 5 6 7 8 9 15 19" Search => 10	
-	// A.addFront(10); 
+	A.addFront(10); 
+    for (int i=0; i< A.length();i++) cout << A[i] << " ";  cout << endl;
 	// // A => "10 0 1 2 3 4 5 6 7 8 9 15 19"
-	// cout << "Select is " << A.linearSearch(5) << endl;
+	cout << "Select is " << A.linearSearch(5) << endl;
+    // cout<<"FRONT: "<<A.fIndex()<<endl;
+    // cout<<"END: "<<A.eIndex()<<endl;
 	// // A => "10 0 1 2 3 4 5 6 7 8 9 15 19" Search => 6
-	// cout << "Select is " << A.QuickSelect(3) << endl;
+	cout << "Select is " << A.QuickSelect(3) << endl;
     // // Select => 2	
-	// //	cout << "Select is " << A.WCSelect(12) << endl;
+    //	cout << "Select is " << A.WCSelect(12) << endl;
 	// // Select => 15
-	// A.stableSort();
+	A.stableSort();
+    for (int i=0; i< A.length();i++) cout << A[i] << " ";  cout << endl;
 	// // A => "0 1 2 3 4 5 6 7 8 9 10 15 19"
 	// A.addEnd(11); A.addFront(1); A.addFront(2); A.addFront(3);
 	// cout << "capacity is " << A.capacity() << endl;
