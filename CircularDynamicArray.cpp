@@ -568,7 +568,7 @@ class CircularDynamicArray
 
 
     private:
-    T* array; //A pointer to the dynamic array.
+    T* array;
     int aSize;
     int aCapacity;
     bool isReversed;
