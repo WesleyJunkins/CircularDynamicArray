@@ -51,8 +51,7 @@ class CircularDynamicArray
             endIndex = other.endIndex;
         }
         return *this;
-    }
-
+    };
 
     ~CircularDynamicArray()
     {
@@ -202,18 +201,103 @@ class CircularDynamicArray
     void clear() //DONE
     {
         delete[] array;
-        T* array = new T[2];
+        array = new T[2];
         aSize = 0;
         aCapacity = 2;
     };
 
-    T QuickSelect(/*int k*/)
+    T QuickSelect(int k)
     {
+        T* tempArray = new T[aSize];
+        int tempArraySize = 0;
+        if(isReversed == false)
+        {
+            int startingIndex = actualPosition(frontIndex);
+            for(int i = 0; i < aSize; i++)
+            {
+                tempArray[i] = array[actualPosition(startingIndex)];
+                tempArraySize++;
+                startingIndex++;
+            }
+        }else
+        if(isReversed == true)
+        {
+            int startingIndex = actualPosition(frontIndex);
+            for(int i = 0; i < aSize; i++)
+            {
+                tempArray[i] = array[actualPosition(startingIndex)];
+                tempArraySize++;
+                startingIndex--;
+            }
+        }
 
+        T finalResult = select(tempArray, tempArraySize, k);
+        delete[] tempArray;
+        return finalResult;
+    };
+
+    T select(T tempArray[], int tempArraySize, int k)
+    {
+        int randomIndex = rand() % tempArraySize;
+        T pivot = tempArray[randomIndex];
+        T* L = new T[tempArraySize];
+        T* E = new T[tempArraySize];
+        T* G = new T[tempArraySize];
+        int Lindex = 0;
+        int Eindex = 0;
+        int Gindex = 0;
+        int Lsize = 0;
+        int Esize = 0;
+        int Gsize = 0;
+        for(int i = 0; i < tempArraySize; i++)
+        {
+            if(tempArray[i] < pivot)
+            {
+                L[Lindex] = tempArray[i];
+                Lindex++;
+                Lsize++;
+            }else
+            if(tempArray[i] == pivot)
+            {
+                E[Eindex] = tempArray[i];
+                Eindex++;
+                Esize++;
+            }else
+            {
+                G[Gindex] = tempArray[i];
+                Gindex++;
+                Gsize++;
+            }
+
+            T recursiveResult;
+            if(k <= Lsize)
+            {
+                recursiveResult = select(L, Lsize, k);
+                delete[] L;
+                delete[] E;
+                delete[] G;
+                return recursiveResult;
+            }else
+            if(k <= Lsize + Esize)
+            {
+                delete[] L;
+                delete[] E;
+                delete[] G;
+                return pivot;
+            }else
+            {
+                recursiveResult = select(G, Gsize, k - Lsize - Esize);
+                delete[] L;
+                delete[] E;
+                delete[] G;
+                return recursiveResult;
+            }
+        }
     };
 
     void stableSort()
     {
+        //When copying the SORTED array back into the original array, there are still values from the UNSORTED, UNWRAPPED array inside the array. These shouldn't be a problem since the user will not see this. These leftover elements will never be seen by the user since the user only sees from the front index to the back index.
         T* tempArray = new T[aSize];
         if(isReversed == false)
         {
@@ -326,7 +410,7 @@ class CircularDynamicArray
         bool found = false;
         for(int i = 0; i < aSize; i++)
         {
-            if(array[actualPosition(i) == e])
+            if(array[actualPosition(i)] == e)
             {
                 found = true;
                 return actualPosition(i);
@@ -612,10 +696,13 @@ int main()
     myArray.addEnd(5);
     myArray.addEnd(23);
     myArray.addEnd(46);
+    myArray.addFront(444);
     //myArray.addFront(0);
     //myArray.addFront(-13);
-    myArray.reverse();
+    //myArray.reverse();
     myArray.stableSort();
+    cout<<"FOUND"<<myArray.binSearch(5)<<endl;
+    cout<<"LinearSearchFound: "<<myArray.linearSearch(23)<<endl;
     //cout<<"POSITION::: "<<myArray.binSearch(46)<<endl;
 
     cout<<"F: "<<myArray.fIndex()<<" ";
