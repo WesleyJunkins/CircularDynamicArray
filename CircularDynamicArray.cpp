@@ -1,11 +1,12 @@
 #include <iostream>
+#include <cstdlib>
 using namespace std;
 
 template <typename T>
 class CircularDynamicArray
 {
     public:
-    CircularDynamicArray() //DONE
+    CircularDynamicArray()
     {
         array = new T[2];
         aSize = 0;
@@ -15,7 +16,7 @@ class CircularDynamicArray
         endIndex = 0;
     };
 
-    CircularDynamicArray(int s) //DONE
+    CircularDynamicArray(int s)
     {
         array = new T[s];
         aSize = s;
@@ -25,7 +26,6 @@ class CircularDynamicArray
         endIndex = s - 1;
     };
 
-    //Copy Constructor
     CircularDynamicArray(const CircularDynamicArray& other)
     {
         array = new T[other.aCapacity];
@@ -40,12 +40,12 @@ class CircularDynamicArray
         endIndex = other.endIndex;
     };
 
-    //Copy Assignment Operator
     CircularDynamicArray& operator=(const CircularDynamicArray& other)
     {
-        if (this != &other) {
+        if (this != &other) 
+        {
             T* newArray = new T[other.aCapacity];
-            for (int i = 0; i < other.aSize; i++)
+            for (int i = 0; i < other.aCapacity; i++)
             {
                 newArray[i] = other.array[i];
             }
@@ -200,17 +200,17 @@ class CircularDynamicArray
         }
     };
 
-    int length() //DONE
+    int length()
     {
         return aSize;
     };
 
-    int capacity() //DONE
+    int capacity()
     {
         return aCapacity;
     };
 
-    void clear() //DONE
+    void clear()
     {
         delete[] array;
         array = new T[2];
@@ -242,7 +242,6 @@ class CircularDynamicArray
                 startingIndex--;
             }
         }
-
         T finalResult = select(tempArray, tempArraySize, k);
         delete[] tempArray;
         return finalResult;
@@ -281,7 +280,6 @@ class CircularDynamicArray
                 Gsize++;
             }
         }
-
         T recursiveResult;
         if(k <= Lsize)
         {
@@ -309,7 +307,6 @@ class CircularDynamicArray
 
     void stableSort()
     {
-        //When copying the SORTED array back into the original array, there are still values from the UNSORTED, UNWRAPPED array inside the array. These shouldn't be a problem since the user will not see this. These leftover elements will never be seen by the user since the user only sees from the front index to the back index.
         T* tempArray = new T[aSize];
         if(isReversed == false)
         {
@@ -332,22 +329,26 @@ class CircularDynamicArray
         int lowIndex = 0;
         int highIndex = aSize - 1;
         mergeSort(tempArray, lowIndex, highIndex);
-
-        for(int i = 0; i < aSize; i++)
-        {
-            array[actualPosition(i)] = tempArray[actualPosition(i)];
-        }
         if(isReversed == false)
         {
+            for(int i = 0; i < aSize; i++)
+            {
+                array[actualPosition(i)] = tempArray[actualPosition(i)];
+            }
             frontIndex = 0;
             endIndex = actualPosition(aSize - 1);
         }else
         if(isReversed == true)
         {
+            int tempCounter = 0;
+            for(int i = aSize - 1; i >= 0; i--)
+            {
+                array[actualPosition(tempCounter)] = tempArray[actualPosition(i)];
+                tempCounter++;
+            }
             frontIndex = actualPosition(aSize - 1);
             endIndex = 0;
         }
-
         delete[] tempArray;
     };
 
@@ -426,21 +427,21 @@ class CircularDynamicArray
             {
                 if(array[actualPosition(startingIndex)] == e)
                 {
-                    return i; //We return i because this is the USER's view. We would return actualPosition(startingIndex) if we were in the PROGRAMMER's view.
+                    return i;
                 }
                 startingIndex++;
             }
         }else
         if(isReversed == true)
         {
-            int startingIndex = endIndex;
+            int startingIndex = frontIndex;
             for(int i = 0; i < aSize; i++)
             {
                 if(array[actualPosition(startingIndex)] == e)
                 {
                     return i;
                 }
-                startingIndex++;
+                startingIndex--;
             }
         }
         return -1;
@@ -478,11 +479,11 @@ class CircularDynamicArray
         {
             if(isReversed == false)
             {
-                return actualPosition(frontIndex + binSearchIndex);
+                return binSearchIndex;
             }else
             if(isReversed == true)
             {
-                return actualPosition(endIndex + binSearchIndex);
+                return binSearchIndex; 
             }
         }
         return binSearchIndex;
@@ -563,9 +564,15 @@ class CircularDynamicArray
         return endIndex;
     };
 
-
-
-
+    int fIndexActual()
+    {
+        return actualPosition(frontIndex);
+    }
+    
+    int eIndexActual()
+    {
+        return actualPosition(endIndex);
+    };
 
     private:
     T* array;
@@ -576,7 +583,7 @@ class CircularDynamicArray
     int endIndex;
     T returnReferenceValue;
 
-    void reallocate(int capacityNeeded) //Takes a parameter of the new capacity needed (provided by the caller). It then allocates a new array of that size, copies all elements over to it, and deletes the old array. DONE
+    void reallocate(int capacityNeeded)
     {
         if(isReversed == false)
         {
@@ -612,7 +619,7 @@ class CircularDynamicArray
         }
     };
 
-    int actualPosition(int beforeMod) //DONE
+    int actualPosition(int beforeMod)
     {
         if(beforeMod < 0)
         {
