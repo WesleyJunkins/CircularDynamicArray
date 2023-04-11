@@ -1,3 +1,6 @@
+#ifndef circularDynamicArray
+#define circularDynamicArray
+
 #include <iostream>
 #include <cstdlib>
 using namespace std;
@@ -5,7 +8,7 @@ using namespace std;
 template <typename T>
 class CircularDynamicArray
 {
-    public:
+public:
     CircularDynamicArray()
     {
         array = new T[2];
@@ -26,10 +29,10 @@ class CircularDynamicArray
         endIndex = s - 1;
     };
 
-    CircularDynamicArray(const CircularDynamicArray& other)
+    CircularDynamicArray(const CircularDynamicArray &other)
     {
         array = new T[other.aCapacity];
-        for(int i = 0; i < other.aCapacity; i++)
+        for (int i = 0; i < other.aCapacity; i++)
         {
             array[i] = other.array[i];
         }
@@ -40,11 +43,11 @@ class CircularDynamicArray
         endIndex = other.endIndex;
     };
 
-    CircularDynamicArray& operator=(const CircularDynamicArray& other)
+    CircularDynamicArray &operator=(const CircularDynamicArray &other)
     {
-        if (this != &other) 
+        if (this != &other)
         {
-            T* newArray = new T[other.aCapacity];
+            T *newArray = new T[other.aCapacity];
             for (int i = 0; i < other.aCapacity; i++)
             {
                 newArray[i] = other.array[i];
@@ -65,19 +68,40 @@ class CircularDynamicArray
         delete[] array;
     };
 
-    T& operator[](int i)
+    T &operator[](int i)
     {
-        if((i < 0) || (i > aSize - 1))
+        if ((i < 0) || (i > aSize - 1))
         {
-            cout<<"ERROR: ["<<i<<"] is out of bounds for this array. Enter a value between 0 and "<<aSize - 1<<".\n";
+            cout << "ERROR: [" << i << "] is out of bounds for this array. Enter a value between 0 and " << aSize - 1 << ".\n";
             return returnReferenceValue;
         }
         else
         {
-            if(isReversed == false)
+            if (isReversed == false)
             {
                 return array[actualPosition(frontIndex + i)];
-            }else
+            }
+            else
+            {
+                return array[actualPosition(frontIndex - i)];
+            }
+        };
+    };
+
+    const T &operator[](int i) const
+    {
+        if ((i < 0) || (i > aSize - 1))
+        {
+            cout << "ERROR: [" << i << "] is out of bounds for this array. Enter a value between 0 and " << aSize - 1 << ".\n";
+            return returnReferenceValue;
+        }
+        else
+        {
+            if (isReversed == false)
+            {
+                return array[actualPosition(frontIndex + i)];
+            }
+            else
             {
                 return array[actualPosition(frontIndex - i)];
             }
@@ -86,30 +110,32 @@ class CircularDynamicArray
 
     void addEnd(T v)
     {
-        if(aSize == aCapacity)
+        if (aSize == aCapacity)
         {
             this->reallocate(aCapacity * 2);
         }
-        if(isReversed == false)
+        if (isReversed == false)
         {
-            if(aSize == 0)
+            if (aSize == 0)
             {
                 array[actualPosition(endIndex)] = v;
                 aSize++;
-            }else
+            }
+            else
             {
                 array[actualPosition(endIndex + 1)] = v;
                 aSize++;
                 endIndex = actualPosition(endIndex + 1);
             }
-        }else
-        if(isReversed == true)
+        }
+        else if (isReversed == true)
         {
-            if(aSize == 0)
+            if (aSize == 0)
             {
                 array[actualPosition(endIndex)] = v;
                 aSize++;
-            }else
+            }
+            else
             {
                 array[actualPosition(endIndex - 1)] = v;
                 aSize++;
@@ -120,30 +146,32 @@ class CircularDynamicArray
 
     void addFront(T v)
     {
-        if(aSize == aCapacity)
+        if (aSize == aCapacity)
         {
             this->reallocate(aCapacity * 2);
         }
-        if(isReversed == false)
+        if (isReversed == false)
         {
-            if(aSize == 0)
+            if (aSize == 0)
             {
                 array[actualPosition(frontIndex)] = v;
                 aSize++;
-            }else
+            }
+            else
             {
                 array[actualPosition(frontIndex - 1)] = v;
                 aSize++;
                 frontIndex = actualPosition(frontIndex - 1);
             }
-        }else
-        if(isReversed == true)
+        }
+        else if (isReversed == true)
         {
-            if(aSize == 0)
+            if (aSize == 0)
             {
                 array[actualPosition(frontIndex)] = v;
                 aSize++;
-            }else
+            }
+            else
             {
                 array[actualPosition(frontIndex + 1)] = v;
                 aSize++;
@@ -154,21 +182,21 @@ class CircularDynamicArray
 
     void delEnd()
     {
-        if(aSize <= (int(aCapacity / 4)))
+        if (aSize <= (int(aCapacity / 4)))
         {
             this->reallocate(int(aCapacity / 2));
         }
-        if(isReversed == false)
+        if (isReversed == false)
         {
-            if(aSize != 0)
+            if (aSize != 0)
             {
                 endIndex = actualPosition(endIndex - 1);
                 aSize--;
             }
-        }else
-        if(isReversed == true)
+        }
+        else if (isReversed == true)
         {
-            if(aSize != 0)
+            if (aSize != 0)
             {
                 endIndex = actualPosition(endIndex + 1);
                 aSize--;
@@ -178,21 +206,21 @@ class CircularDynamicArray
 
     void delFront()
     {
-        if(aSize <= (int(aCapacity / 4)))
+        if (aSize <= (int(aCapacity / 4)))
         {
             this->reallocate(int(aCapacity / 2));
         }
-        if(isReversed == false)
+        if (isReversed == false)
         {
-            if(aSize != 0)
+            if (aSize != 0)
             {
                 frontIndex = actualPosition(frontIndex + 1);
                 aSize--;
             }
-        }else
-        if(isReversed == true)
+        }
+        else if (isReversed == true)
         {
-            if(aSize != 0)
+            if (aSize != 0)
             {
                 frontIndex = actualPosition(frontIndex - 1);
                 aSize--;
@@ -201,6 +229,11 @@ class CircularDynamicArray
     };
 
     int length()
+    {
+        return aSize;
+    };
+
+    int length() const
     {
         return aSize;
     };
@@ -220,22 +253,22 @@ class CircularDynamicArray
 
     T QuickSelect(int k)
     {
-        T* tempArray = new T[aSize];
+        T *tempArray = new T[aSize];
         int tempArraySize = 0;
-        if(isReversed == false)
+        if (isReversed == false)
         {
             int startingIndex = actualPosition(frontIndex);
-            for(int i = 0; i < aSize; i++)
+            for (int i = 0; i < aSize; i++)
             {
                 tempArray[i] = array[actualPosition(startingIndex)];
                 tempArraySize++;
                 startingIndex++;
             }
-        }else
-        if(isReversed == true)
+        }
+        else if (isReversed == true)
         {
             int startingIndex = actualPosition(frontIndex);
-            for(int i = 0; i < aSize; i++)
+            for (int i = 0; i < aSize; i++)
             {
                 tempArray[i] = array[actualPosition(startingIndex)];
                 tempArraySize++;
@@ -251,29 +284,30 @@ class CircularDynamicArray
     {
         int randomIndex = rand() % tempArraySize;
         T pivot = tempArray[randomIndex];
-        T* L = new T[tempArraySize];
-        T* E = new T[tempArraySize];
-        T* G = new T[tempArraySize];
+        T *L = new T[tempArraySize];
+        T *E = new T[tempArraySize];
+        T *G = new T[tempArraySize];
         int Lindex = 0;
         int Eindex = 0;
         int Gindex = 0;
         int Lsize = 0;
         int Esize = 0;
         int Gsize = 0;
-        for(int i = 0; i < tempArraySize; i++)
+        for (int i = 0; i < tempArraySize; i++)
         {
-            if(tempArray[i] < pivot)
+            if (tempArray[i] < pivot)
             {
                 L[Lindex] = tempArray[i];
                 Lindex++;
                 Lsize++;
-            }else
-            if(tempArray[i] == pivot)
+            }
+            else if (tempArray[i] == pivot)
             {
                 E[Eindex] = tempArray[i];
                 Eindex++;
                 Esize++;
-            }else
+            }
+            else
             {
                 G[Gindex] = tempArray[i];
                 Gindex++;
@@ -281,21 +315,22 @@ class CircularDynamicArray
             }
         }
         T recursiveResult;
-        if(k <= Lsize)
+        if (k <= Lsize)
         {
             recursiveResult = select(L, Lsize, k);
             delete[] L;
             delete[] E;
             delete[] G;
             return recursiveResult;
-        }else
-        if(k <= Lsize + Esize)
+        }
+        else if (k <= Lsize + Esize)
         {
             delete[] L;
             delete[] E;
             delete[] G;
             return pivot;
-        }else
+        }
+        else
         {
             recursiveResult = select(G, Gsize, k - Lsize - Esize);
             delete[] L;
@@ -307,20 +342,20 @@ class CircularDynamicArray
 
     void stableSort()
     {
-        T* tempArray = new T[aSize];
-        if(isReversed == false)
+        T *tempArray = new T[aSize];
+        if (isReversed == false)
         {
             int startingIndex = actualPosition(frontIndex);
-            for(int i = 0; i < aSize; i++)
+            for (int i = 0; i < aSize; i++)
             {
                 tempArray[i] = array[actualPosition(startingIndex)];
                 startingIndex++;
             }
-        }else
-        if(isReversed == true)
+        }
+        else if (isReversed == true)
         {
             int startingIndex = actualPosition(frontIndex);
-            for(int i = 0; i < aSize; i++)
+            for (int i = 0; i < aSize; i++)
             {
                 tempArray[i] = array[actualPosition(startingIndex)];
                 startingIndex--;
@@ -329,19 +364,19 @@ class CircularDynamicArray
         int lowIndex = 0;
         int highIndex = aSize - 1;
         mergeSort(tempArray, lowIndex, highIndex);
-        if(isReversed == false)
+        if (isReversed == false)
         {
-            for(int i = 0; i < aSize; i++)
+            for (int i = 0; i < aSize; i++)
             {
                 array[actualPosition(i)] = tempArray[actualPosition(i)];
             }
             frontIndex = 0;
             endIndex = actualPosition(aSize - 1);
-        }else
-        if(isReversed == true)
+        }
+        else if (isReversed == true)
         {
             int tempCounter = 0;
-            for(int i = aSize - 1; i >= 0; i--)
+            for (int i = aSize - 1; i >= 0; i--)
             {
                 array[actualPosition(tempCounter)] = tempArray[actualPosition(i)];
                 tempCounter++;
@@ -357,14 +392,14 @@ class CircularDynamicArray
         int const leftSubArraySize = middleIndex - lowIndex + 1;
         int const rightSubArraySize = highIndex - middleIndex;
 
-        T* leftSubArray = new T[leftSubArraySize];
-        T* rightSubArray = new T[rightSubArraySize];
+        T *leftSubArray = new T[leftSubArraySize];
+        T *rightSubArray = new T[rightSubArraySize];
 
-        for(int i = 0; i < leftSubArraySize; i++)
+        for (int i = 0; i < leftSubArraySize; i++)
         {
             leftSubArray[i] = tempArray[lowIndex + i];
         }
-        for(int i = 0; i < rightSubArraySize; i++)
+        for (int i = 0; i < rightSubArraySize; i++)
         {
             rightSubArray[i] = tempArray[middleIndex + 1 + i];
         }
@@ -373,13 +408,14 @@ class CircularDynamicArray
         int rightSubArrayStartingIndex = 0;
         int mergedArrayIndex = lowIndex;
 
-        while((leftSubArrayStartingIndex < leftSubArraySize) && (rightSubArrayStartingIndex < rightSubArraySize))
+        while ((leftSubArrayStartingIndex < leftSubArraySize) && (rightSubArrayStartingIndex < rightSubArraySize))
         {
-            if(leftSubArray[leftSubArrayStartingIndex] <= rightSubArray[rightSubArrayStartingIndex])
+            if (leftSubArray[leftSubArrayStartingIndex] <= rightSubArray[rightSubArrayStartingIndex])
             {
                 tempArray[mergedArrayIndex] = leftSubArray[leftSubArrayStartingIndex];
                 leftSubArrayStartingIndex++;
-            }else
+            }
+            else
             {
                 tempArray[mergedArrayIndex] = rightSubArray[rightSubArrayStartingIndex];
                 rightSubArrayStartingIndex++;
@@ -387,14 +423,14 @@ class CircularDynamicArray
             mergedArrayIndex++;
         }
 
-        while(leftSubArrayStartingIndex < leftSubArraySize)
+        while (leftSubArrayStartingIndex < leftSubArraySize)
         {
             tempArray[mergedArrayIndex] = leftSubArray[leftSubArrayStartingIndex];
             leftSubArrayStartingIndex++;
             mergedArrayIndex++;
         }
 
-        while(rightSubArrayStartingIndex < rightSubArraySize)
+        while (rightSubArrayStartingIndex < rightSubArraySize)
         {
             tempArray[mergedArrayIndex] = rightSubArray[rightSubArrayStartingIndex];
             rightSubArrayStartingIndex++;
@@ -403,11 +439,11 @@ class CircularDynamicArray
 
         delete[] leftSubArray;
         delete[] rightSubArray;
-    }
+    };
 
     void mergeSort(T tempArray[], int const lowIndex, int const highIndex)
     {
-        if(lowIndex >= highIndex)
+        if (lowIndex >= highIndex)
         {
             return;
         }
@@ -416,28 +452,28 @@ class CircularDynamicArray
         mergeSort(tempArray, lowIndex, middleIndex);
         mergeSort(tempArray, middleIndex + 1, highIndex);
         mergeBack(tempArray, lowIndex, middleIndex, highIndex);
-    }
+    };
 
     int linearSearch(T e)
     {
-        if(isReversed == false)
+        if (isReversed == false)
         {
             int startingIndex = frontIndex;
-            for(int i = 0; i < aSize; i++)
+            for (int i = 0; i < aSize; i++)
             {
-                if(array[actualPosition(startingIndex)] == e)
+                if (array[actualPosition(startingIndex)] == e)
                 {
                     return i;
                 }
                 startingIndex++;
             }
-        }else
-        if(isReversed == true)
+        }
+        else if (isReversed == true)
         {
             int startingIndex = frontIndex;
-            for(int i = 0; i < aSize; i++)
+            for (int i = 0; i < aSize; i++)
             {
-                if(array[actualPosition(startingIndex)] == e)
+                if (array[actualPosition(startingIndex)] == e)
                 {
                     return i;
                 }
@@ -449,20 +485,20 @@ class CircularDynamicArray
 
     int binSearch(T e)
     {
-        T* tempArray = new T[aSize];
-        if(isReversed == false)
+        T *tempArray = new T[aSize];
+        if (isReversed == false)
         {
             int startingIndex = actualPosition(frontIndex);
-            for(int i = 0; i < aSize; i++)
+            for (int i = 0; i < aSize; i++)
             {
                 tempArray[i] = array[actualPosition(startingIndex)];
                 startingIndex++;
             }
-        }else
-        if(isReversed == true)
+        }
+        else if (isReversed == true)
         {
             int startingIndex = actualPosition(frontIndex);
-            for(int i = 0; i < aSize; i++)
+            for (int i = 0; i < aSize; i++)
             {
                 tempArray[i] = array[actualPosition(startingIndex)];
                 startingIndex--;
@@ -472,18 +508,19 @@ class CircularDynamicArray
         int highIndex = aSize - 1;
         int binSearchIndex = splitSearch(e, tempArray, lowIndex, highIndex);
         delete[] tempArray;
-        if(binSearchIndex == -1)
+        if (binSearchIndex == -1)
         {
             return -1;
-        }else
+        }
+        else
         {
-            if(isReversed == false)
+            if (isReversed == false)
             {
                 return binSearchIndex;
-            }else
-            if(isReversed == true)
+            }
+            else if (isReversed == true)
             {
-                return binSearchIndex; 
+                return binSearchIndex;
             }
         }
         return binSearchIndex;
@@ -491,17 +528,18 @@ class CircularDynamicArray
 
     int splitSearch(T e, T tempArray[], int lowIndex, int highIndex)
     {
-        while(lowIndex <= highIndex)
+        while (lowIndex <= highIndex)
         {
             int middleIndex = (lowIndex + highIndex) / 2;
-            if(tempArray[middleIndex] == e)
+            if (tempArray[middleIndex] == e)
             {
                 return middleIndex;
-            }else
-            if(e > tempArray[middleIndex])
+            }
+            else if (e > tempArray[middleIndex])
             {
                 lowIndex = middleIndex + 1;
-            }else
+            }
+            else
             {
                 highIndex = middleIndex - 1;
             }
@@ -511,14 +549,14 @@ class CircularDynamicArray
 
     void reverse()
     {
-        if(isReversed == true)
+        if (isReversed == true)
         {
             int tempIndex = frontIndex;
             frontIndex = endIndex;
             endIndex = tempIndex;
             isReversed = false;
         }
-        else if(isReversed == false)
+        else if (isReversed == false)
         {
             int tempIndex = frontIndex;
             frontIndex = endIndex;
@@ -526,39 +564,39 @@ class CircularDynamicArray
             isReversed = true;
         };
     };
-    
+
     T at(int i)
     {
         return array[actualPosition(i)];
     };
-    
+
     void print()
     {
-        if(isReversed == false)
+        if (isReversed == false)
         {
             int currentIndex = frontIndex;
-            for(int i = 0; i < aSize; i++)
+            for (int i = 0; i < aSize; i++)
             {
-                cout<<array[actualPosition(currentIndex)]<<endl;
+                cout << array[actualPosition(currentIndex)] << endl;
                 currentIndex++;
             }
-        }else
-        if(isReversed == true)
+        }
+        else if (isReversed == true)
         {
             int currentIndex = frontIndex;
-            for(int i = 0; i < aSize; i++)
+            for (int i = 0; i < aSize; i++)
             {
-                cout<<array[actualPosition(currentIndex)]<<endl;
+                cout << array[actualPosition(currentIndex)] << endl;
                 currentIndex--;
             }
         }
     };
-    
+
     int fIndex()
     {
         return frontIndex;
     }
-    
+
     int eIndex()
     {
         return endIndex;
@@ -568,14 +606,14 @@ class CircularDynamicArray
     {
         return actualPosition(frontIndex);
     }
-    
+
     int eIndexActual()
     {
         return actualPosition(endIndex);
     };
 
-    private:
-    T* array;
+private:
+    T *array;
     int aSize;
     int aCapacity;
     bool isReversed;
@@ -585,11 +623,11 @@ class CircularDynamicArray
 
     void reallocate(int capacityNeeded)
     {
-        if(isReversed == false)
+        if (isReversed == false)
         {
-            T* newArray = new T[capacityNeeded];
+            T *newArray = new T[capacityNeeded];
             int currentIndex = frontIndex;
-            for(int i = 0; i < aSize; i++)
+            for (int i = 0; i < aSize; i++)
             {
                 newArray[i] = array[actualPosition(currentIndex)];
                 currentIndex++;
@@ -601,11 +639,11 @@ class CircularDynamicArray
             endIndex = aSize - 1;
             isReversed = false;
         }
-        if(isReversed == true)
+        if (isReversed == true)
         {
-            T* newArray = new T[capacityNeeded];
+            T *newArray = new T[capacityNeeded];
             int currentIndex = endIndex;
-            for(int i = 0; i < aSize; i++)
+            for (int i = 0; i < aSize; i++)
             {
                 newArray[i] = array[actualPosition(currentIndex)];
                 currentIndex++;
@@ -621,11 +659,23 @@ class CircularDynamicArray
 
     int actualPosition(int beforeMod)
     {
-        if(beforeMod < 0)
+        if (beforeMod < 0)
         {
             beforeMod = beforeMod + aCapacity;
         }
-        int actualPosition = beforeMod%aCapacity;
+        int actualPosition = beforeMod % aCapacity;
         return actualPosition;
-    }
+    };
+
+    int actualPosition(int beforeMod) const
+    {
+        if (beforeMod < 0)
+        {
+            beforeMod = beforeMod + aCapacity;
+        }
+        int actualPosition = beforeMod % aCapacity;
+        return actualPosition;
+    };
 };
+
+#endif
